@@ -18,8 +18,6 @@ awsS3Resource = AwsS3Resource()
 def runDevice(num):
     deviceUUID = uuid.uuid4().__str__()
     print('Device "{}" and UUID "{}" Job started'.format(num, deviceUUID))
-    now = datetime.now(tz=tz.tzutc())
-    date_time = now.strftime("%Y-%m-%dT%H:%M:%S")
     devInfo = {
         'Metadata': {
             "id": deviceUUID,
@@ -28,7 +26,6 @@ def runDevice(num):
             "description": "Calle {} N. {}-{}".format(random.randint(1, 100),
                                                       random.randint(1, 100),
                                                       random.randint(1, 100)),
-            "time": date_time,
             "index_name": "visual_result"
         }
     }
@@ -37,7 +34,10 @@ def runDevice(num):
         currentImageUUID = uuid.uuid4().__str__()
         imageAbsPath = imagePath+"/"+imageFiles[i]
         print('img path {}'.format(imageAbsPath))
+        now = datetime.now(tz=tz.tzutc())
+        date_time = now.strftime("%Y-%m-%dT%H:%M:%S")
         devInfo['Metadata']['data_uuid'] = currentImageUUID
+        devInfo['Metadata']['time'] = date_time
         awsS3Resource.uploadData(imageAbsPath, currentImageUUID, devInfo)
         print('Device "{}" send Image number "{}" and UUID "{}"'.format(num, i, currentImageUUID))
         sleep(interval)
